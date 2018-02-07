@@ -126,15 +126,6 @@ include_directories(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_executable(talker src/talker.cpp)
-target_link_libraries(talker ${catkin_LIBRARIES})
-
-add_executable(listener src/listener.cpp)
-target_link_libraries(listener ${catkin_LIBRARIES})
-
-add_executable(urg_sub src/urg_sub.cpp)
-target_link_libraries(urg_sub ${catkin_LIBRARIES})
-
 add_executable(go_forward src/go_forward.cpp)
 target_link_libraries(go_forward ${catkin_LIBRARIES})
 ## Declare a C++ library
