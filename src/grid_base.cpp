@@ -194,7 +194,7 @@ public:
 
       // turn right
       case 2:  // forward state
-      case 4:  // subscribe state
+      case 4:  // surrounded state
       case 10: // recovery state - out
         cmd_vel.linear.x = 0.1;
         cmd_vel.linear.y = 0.0;
