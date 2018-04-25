@@ -171,6 +171,20 @@ public:
         ROS_INFO("recovery state - out");
       }
     }
+    
+    // 10, back mid left state
+    if(
+      grid[0] > SCALE && grid[0] < SCALE*2
+      && grid[1] > SCALE && grid[1] < SCALE*2
+      && grid[2] > SCALE*2
+      && grid[3] > SCALE*2
+      && grid[4] > SCALE*2
+      && grid[5] > SCALE*2
+      && grid[6] > SCALE*2
+    ){
+      state_now = 11;
+      ROS_INFO("back mid left state");
+    }
 
     switch(state_now){
       // stop
@@ -205,6 +219,7 @@ public:
       // turn left
       case 3:  // backward state
       case 7:  // back left state
+      case 11: // back mid left state
         cmd_vel.linear.x = 0.1;
         cmd_vel.linear.y = 0.0;
         cmd_vel.angular.z = 1.0;
