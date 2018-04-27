@@ -10,8 +10,9 @@ public:
   GoForward(){
     scan_sub = n.subscribe("scan", 1000, &GoForward::scanCallback, this);
     vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 10);
+    angular_vel = 0;
   }
-
+  
   double null_check(double target){
     if(!(target > 0)){
       target = (double)RANGE_MAX;
@@ -151,9 +152,9 @@ public:
 
     // 9, recovery state 
     if(
-      grid[0] <= SCALE
-      || grid[1] <= SCALE
-      || grid[2] <= SCALE
+      grid[0] <= SCALE*0.6
+      || grid[1] <= SCALE*0.6
+      || grid[2] <= SCALE*0.6
       || grid[3] <= SCALE
       || grid[4] <= SCALE
       || grid[5] <= SCALE
@@ -200,9 +201,10 @@ public:
       case 6:  // front hole state
       case 8:  // fore left state
       case 9:  // recovery state - safe
+        angular_vel = 0.0;
         cmd_vel.linear.x = 0.2;
         cmd_vel.linear.y = 0.0;
-        cmd_vel.angular.z = 0.0;
+        cmd_vel.angular.z = angular_vel;
         ROS_INFO("-> go forward");
         break;
 
@@ -210,9 +212,12 @@ public:
       case 2:  // forward state
       case 4:  // surrounded state
       case 10: // recovery state - out
+        if(angular_vel > -0.8){
+          angular_vel -= 0.2;
+        }
         cmd_vel.linear.x = 0.1;
         cmd_vel.linear.y = 0.0;
-        cmd_vel.angular.z = -1.0;
+        cmd_vel.angular.z = angular_vel;
         ROS_INFO("-> turn right");
         break;
 
@@ -220,9 +225,16 @@ public:
       case 3:  // backward state
       case 7:  // back left state
       case 11: // back mid left state
+        if(angular_vel < 1.0){
+          if(angular_vel < 0.0){
+            angular_vel = 0.0;
+          }else{
+            angular_vel += 0.5;
+          }
+        }
         cmd_vel.linear.x = 0.1;
         cmd_vel.linear.y = 0.0;
-        cmd_vel.angular.z = 1.0;
+        cmd_vel.angular.z = angular_vel;
         ROS_INFO("-> turn left");
         break;
     }
@@ -235,6 +247,7 @@ private:
   ros::Subscriber scan_sub;
   ros::Publisher vel_pub;
   geometry_msgs::Twist cmd_vel;
+  double angular_vel;
 };
 
 
